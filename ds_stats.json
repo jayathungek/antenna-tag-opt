@@ -1,0 +1,112 @@
+{
+    "class": {
+        "lookup": {
+            "0": "BM",
+            "1": "BR",
+            "2": "BW",
+            "3": "BS",
+            "4": "BC",
+            "5": "BG",
+            "6": "BL"
+        }
+    },
+    "antenna_material": {
+        "lookup": {
+            "0": "Techni 7x7 1.0mm",
+            "1": "40kg Trace",
+            "2": "14kg Trace",
+            "3": "0.15 mm NiTi",
+            "4": "0.61 Beadalon",
+            "5": "0.2mm NiTi",
+            "6": "95kg Trace",
+            "7": "0.91 Beadalon 49",
+            "8": "21kg Trace",
+            "9": "70kg Trace",
+            "10": "27kg Trace",
+            "11": "1.5mm GD"
+        }
+    },
+    "Moulding/Potting": {
+        "lookup": {
+            "0": "Dental",
+            "1": "Plastidip",
+            "2": "Case PNN2-09-C",
+            "3": "Case",
+            "4": "Case PNN1-x-C"
+        }
+    },
+    "attachment_method": {
+        "lookup": {
+            "0": "BH",
+            "1": "BG",
+            "2": "NT"
+        }
+    },
+    "Extra_waterproofing": {
+        "lookup": {
+            "0": "Marine 1",
+            "1": "Standard",
+            "2": "N"
+        }
+    },
+    "Country": {
+        "lookup": {
+            "0": "Russia",
+            "1": "Japan",
+            "2": "Italy",
+            "3": "UK",
+            "4": "Czech Republic",
+            "5": "Gibraltar",
+            "6": "Canada",
+            "7": "New Zealand",
+            "8": "India",
+            "9": "Germany",
+            "10": "Australia",
+            "11": "USA",
+            "12": "France",
+            "13": "Taiwan",
+            "14": "Canary Islands",
+            "15": "Spain",
+            "16": "Switzerland"
+        }
+    },
+    "Colour": {
+        "lookup": {
+            "0": "White",
+            "1": "Clear",
+            "2": "Grey",
+            "3": "Black",
+            "4": "Brown",
+            "5": "Light Brown",
+            "6": "Light Grey",
+            "7": "Dark Grey"
+        }
+    },
+    "HS": {
+        "lookup": {
+            "0": "N",
+            "1": "F",
+            "2": "P"
+        }
+    },
+    "antenna_length": {
+        "mean": 12.375,
+        "std": 7.850874943198202
+    },
+    "angle_of_antenna": {
+        "mean": 29.25,
+        "std": 18.06798329094922
+    },
+    "Weight_(g)": {
+        "mean": 10.865299999999998,
+        "std": 17.933336789737194
+    },
+    "Weeks": {
+        "mean": 55.67929999999999,
+        "std": 45.08706410945495
+    },
+    "Average_marks_per_segment": {
+        "mean": 1.5229030152,
+        "std": 2.034948257788006
+    }
+}
