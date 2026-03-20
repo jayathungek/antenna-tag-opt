@@ -1,3 +1,4 @@
 .vscode
 *.docx
 *.csv
+__pycache__

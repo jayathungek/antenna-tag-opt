@@ -1,10 +1,13 @@
 import json
 from pprint import pprint
+from typing import Callable
 
 import torch
 import torch.nn.functional as F
 import pandas as pd
 from torch.utils.data import Dataset
+
+from utils import load_config
 
 
 # https://github.com/c12mind/cvml
@@ -12,9 +15,11 @@ from torch.utils.data import Dataset
 
 device = torch.device("mps")
 class DatasetHandler:
-    def __init__(self, data_path):
-        self.dataset = pd.read_csv(data_path)
+    def __init__(self, config):
+        self.config = config
+        self.dataset = pd.read_csv(self.config["data_path"])
         self.dataset_properties = {}
+        self.normalise_dataset()
     
 
     def norm_continuous_data(self, header):
@@ -24,7 +29,6 @@ class DatasetHandler:
             self.dataset[header] = 0
         else:
             self.dataset[header] = (self.dataset[header] - mean) / std
-        
         return mean, std
     
     def create_lut(self, header):
@@ -35,7 +39,6 @@ class DatasetHandler:
         inv_lut = {v: k for k, v in lut.items()}
         self.dataset[header] = self.dataset[header].map(inv_lut)
         return lut
-
 
     def normalise_dataset(self):
         for col_name, data in self.dataset.items():
@@ -53,7 +56,7 @@ class DatasetHandler:
         
         with open("ds_stats.json", "w") as fh:
             json.dump(self.dataset_properties, fh, indent=4)
-
+            
 
 class AntennaDataset(Dataset):
     def __init__(self, ds_handler):
@@ -70,8 +73,8 @@ class AntennaDataset(Dataset):
         return discrete_cols, cont_cols
     
 
-class CollateFunction(callable):
-    def __init__(self, ds_handler):
+class CollateFunction(Callable):
+    def __init__(self, num_choices):
         self.handler = ds_handler
 
     def __call__(self, batch):
@@ -86,7 +89,7 @@ class CollateFunction(callable):
             target_list.append(row_cont[-1])
 
             for header in header_names:
-                num_choices = len(self.handler.dataset_properties[header]["lookup"].keys())
+                header_onehot = F.one_hot()
                 # iterate thru the headers and create onehot encodings for each one via 
                 # F.one_hot. 
 
@@ -105,7 +108,38 @@ class CollateFunction(callable):
             "targets": target_tensor,
         }
 
-handler = DatasetHandler("data.csv")
-handler.normalise_dataset()
-# antenna_dataset = AntennaDataset(handler)
+        
+def load_data(config):
+    ds_handler = DatasetHandler(config)
+    train_df = ds_handler.dataset
 
+    discrete_cols = train_df.iloc[:, :8]
+    cont_cols = train_df.iloc[:, 8:]
+    disc_header_names = train_df.columns[:8]
+    discrete_list = []
+    cont_list = []
+    target_list = []
+    cont_tensor = torch.FloatTensor(cont_cols.iloc[:, :-1].values)
+    target_tensor = torch.FloatTensor(cont_cols.iloc[:, -1].values)
+
+    discrete_cols_onehot = []
+    for header in disc_header_names:
+        num_choices = len(ds_handler.dataset_properties[header]["lookup"].keys())
+        header_values = torch.tensor(discrete_cols[header].values)
+        header_onehot = F.one_hot(header_values, num_classes=num_choices)
+        discrete_cols_onehot.append(header_onehot)
+    
+    disc_tensor = torch.cat(discrete_cols_onehot, dim=1)
+    feature_tensor = torch.cat((disc_tensor, cont_tensor), dim=1)
+    target_tensor = torch.FloatTensor(target_list)
+    data = {
+        "features": feature_tensor,
+        "targets": target_tensor,
+        "ds_handler": ds_handler,
+    }
+    return data
+
+
+if __name__ == "__main__":
+    config = load_config("config.json")
+    data_obj = load_data(config)
